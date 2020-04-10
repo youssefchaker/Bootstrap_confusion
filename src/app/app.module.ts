@@ -67,8 +67,7 @@ import { HttpModule } from '@angular/http';
     MatProgressSpinnerModule,
     MatSliderModule,
     HttpClientModule,
-    HttpModule,
-    
+    HttpModule
   ],
   providers: [
     DishService,
