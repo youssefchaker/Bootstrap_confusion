@@ -14,7 +14,7 @@
   <h3 *ngIf="dish">{{dish.name | uppercase}}</h3>
 </mat-card-title>
     </mat-card-header>
-    <img mat-card-image src={{dish.image}} alt="{{dish.name}}">
+    <img mat-card-image src="{{BaseURL + dish.image}}" alt={{dish.name}}>
     <mat-card-content>
 <p>{{dish.description}}</p>
     </mat-card-content>
@@ -39,13 +39,40 @@
 
   <div fxFlex="40" *ngIf="dish">
     <div fxFlex>
-      <mat-list >
+      <mat-list>
             <h2>Comments</h2>
               <mat-list-item *ngFor="let comment of dish.comments">
-                <span matline>{{comment.comment}}</span>
-                <span matline>{{comment.rating}} stars'</span>
-                <span matline>--{{comment.author}} {{comment.date | date}}</span>
+                <p matLine>{{comment.comment}}</p>
+                <p matLine>{{comment.rating}} stars'</p>
+                <p matLine>--{{comment.author}} {{comment.date | date}}</p>
               </mat-list-item>
       </mat-list>
+      <form novalidate [formGroup]="feedbackForm" #fform="ngForm" (ngSubmit)="onSubmit()">
+        <mat-list>
+            <mat-list-item>
+              <div [hidden]="feedbackForm.invalid">
+              <p matLine>{{feedbackForm.value.comment}}</p>
+              <p matLine>{{feedbackForm.value.rating}} stars'</p>
+              <p matLine>--{{feedbackForm.value.name}}</p>
+              </div>
+            </mat-list-item>
+    </mat-list>
+        <p>
+          <mat-form-field class="half-width">
+            <input matInput formControlName="name" placeholder="Name" type="text" required>
+            <mat-error *ngIf="formErrors.name">{{formErrors.name}}</mat-error>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-slider min="1" max="5" value="5" step="1" thumbLabel tickInterval="1"  formControlName="rating"></mat-slider>
+        </p>
+        <p>
+          <mat-form-field class="half-width">
+            <input matInput formControlName="comment" placeholder="Comment" type="text" required>
+            <mat-error *ngIf="formErrors.comment">{{formErrors.comment}}</mat-error>
+          </mat-form-field>
+          </p>
+          <button type="submit" mat-button class="background-primary text-floral-white" [disabled]="feedbackForm.invalid">Submit</button>
+          </form>
   </div>
-</div>
+  </div>
