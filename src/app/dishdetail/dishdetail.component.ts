@@ -25,7 +25,9 @@ export class DishdetailComponent implements OnInit {
   feedback: Feedback;
   contactType = ContactType;
   @ViewChild('fform') feedbackFormDirective;
+  comment:Comment
   errMess: string;
+  dishcopy: Dish;
 
 
 
@@ -55,7 +57,7 @@ export class DishdetailComponent implements OnInit {
     .subscribe((dishIds) => this.dishIds=dishIds);
     this.route.params
     .pipe(switchMap((params: Params) => this.dishService.getDish(params['id']))) 
-    .subscribe(dish => {this.dish=dish; this.setPrevNext(dish.id) },
+    .subscribe(dish => {this.dish=dish; this.dishcopy = dish; this.setPrevNext(dish.id) },
     errmess => this.errMess= <any>errmess);
   }
   createForm() {
@@ -97,7 +99,15 @@ export class DishdetailComponent implements OnInit {
     this.location.back();
   }
   onSubmit() {
-    this.dish.comments.push(Comment[this.feedbackForm.value.rating,this.feedbackForm.value.comment,this.feedbackForm.value.name,this.n]);
+    this.comment= this.feedbackForm.value;
+    this.comment.date= new Date().toISOString();
+    this.dishcopy.comments.push(this.comment);
+    this.dishService.putDish(this.dishcopy)
+    .subscribe(dish => {
+      this.dish= dish;
+      this.dishcopy = dish;
+    },
+    errmes =>{this.dish = null; this.dishcopy = null; this.errMess = <any>errmes;});
     this.feedback = this.feedbackForm.value;
     console.log(this.feedback);
     this.feedbackForm.reset({
