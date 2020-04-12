@@ -34,6 +34,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import { HttpClientModule } from '@angular/common/http';
 import { baseURL } from './shared/baseurl';
 import { HttpModule } from '@angular/http';
+import { HighlightDirective } from './directives/highlight.directive';
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,7 +45,8 @@ import { HttpModule } from '@angular/http';
     HomeComponent,
     AboutComponent,
     ContactComponent,
-    LoginComponent
+    LoginComponent,
+    HighlightDirective
   ],
   imports: [
     MatDialogModule,
