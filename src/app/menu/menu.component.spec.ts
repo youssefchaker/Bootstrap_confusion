@@ -55,20 +55,21 @@ describe('MenuComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('dishes item should be 4',()=>{
+  it('dishes items should be 4', () => {
     expect(component.dishes.length).toBe(4);
     expect(component.dishes[1].name).toBe('Zucchipakoda');
     expect(component.dishes[3].featured).toBeFalsy();
   });
 
-  it('should use dishes in the template' , ()=>{
+  it('should use dishes in the template', () => {
     fixture.detectChanges();
 
-    let de:DebugElement;
-    let el:HTMLElement;
-
-    de=fixture.debugElement.query(By.css('h1'));
-    el=de.nativeElement;
+    let de:      DebugElement;
+    let el:      HTMLElement;
+    de = fixture.debugElement.query(By.css('h1'));
+    el = de.nativeElement;
+    
     expect(el.textContent).toContain(DISHES[0].name.toUpperCase());
-  })
+
+  });
 });
