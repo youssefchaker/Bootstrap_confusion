@@ -1,22 +1,50 @@
 import { Injectable } from '@angular/core';
 import {Leader} from '../shared/leader';
 import {LEADERS} from '../shared/leaders';
-import { DISHES } from '../shared/dishes';
 import { of,Observable} from 'rxjs';
 import { delay} from 'rxjs/operators';
+import { ProcessHTTPmsgService} from './process-httpmsg.service';
+import { HttpHeaders} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { baseURL } from '../shared/baseurl';
+import { map , catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
 export class LeaderService {
 
-  constructor() { }
-  getLeaders(): Observable<Leader[]>{
-    return  of(LEADERS).pipe(delay(2000));
-  }
-  getLeader(id:string):Observable<Leader>{
-    return of((LEADERS.filter((leader) => (leader.id === id))[0])).pipe(delay(2000));
-  }
-  getFeaturedLeader():Observable<Leader>{
-    return of((LEADERS.filter((leader) => leader.featured)[0])).pipe(delay(2000));
+  constructor(private http: HttpClient,
+    private processHTTPMsgService: ProcessHTTPmsgService) { }
+
+getLeaders(): Observable<Leader[]> {
+  return this.http.get<Leader[]>(baseURL + 'leaders')
+    .pipe(catchError(this.processHTTPMsgService.handleError));
 }
+
+getLeader(id: number): Observable<Leader> {
+  return this.http.get<Leader>(baseURL + 'leaders/' + id)
+    .pipe(catchError(this.processHTTPMsgService.handleError));
+}
+
+getFeaturedLeader(): Observable<Leader> {
+  return this.http.get<Leader[]>(baseURL + 'leaders?featured=true').pipe(map(Leaders => Leaders[0]))
+    .pipe(catchError(this.processHTTPMsgService.handleError));
+}
+
+getLeaderIds(): Observable<number[] | any> {
+  return this.getLeaders().pipe(map(leaders => leaders.map(leader => leader.id)))
+    .pipe(catchError(error => error));
+}
+putLeader(leader: Leader): Observable<Leader> {
+  const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type':  'application/json'
+    })
+  };
+  return this.http.put<Leader>(baseURL + 'leaders/' + leader.id, leader, httpOptions)
+    .pipe(catchError(this.processHTTPMsgService.handleError));
+}
+
+
+
 }

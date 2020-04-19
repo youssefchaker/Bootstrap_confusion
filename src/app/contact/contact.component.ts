@@ -1,11 +1,22 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
-
+import {visibility , flyInOut, expand} from '../animations/app.animation';
+import { FeedbackService} from '../services/feedback.service';
+import {Params, ActivatedRoute} from '@angular/router';
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
-  styleUrls: ['./contact.component.scss']
+  styleUrls: ['./contact.component.scss'],
+  host:{
+    '[@flyInOut]':'true',
+    'style': 'display:block;'
+  },
+  animations:[
+    flyInOut(),
+    visibility(),
+    expand()
+  ]
 })
 export class ContactComponent implements OnInit {
 
@@ -13,6 +24,11 @@ export class ContactComponent implements OnInit {
   feedback: Feedback;
   contactType = ContactType;
   @ViewChild('fform') feedbackFormDirective;
+  visibility="hidden";
+  errMess: string;
+  test:boolean;
+  feedbackcopy: Feedback;
+  sv:boolean=false;
 
   formErrors = {
     'firstname': '',
@@ -42,7 +58,7 @@ export class ContactComponent implements OnInit {
     }
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private fbs: FeedbackService, private route:ActivatedRoute) {
     this.createForm();
   }
 
@@ -87,7 +103,15 @@ export class ContactComponent implements OnInit {
 
   onSubmit() {
     this.feedback = this.feedbackForm.value;
-    console.log(this.feedback);
+    this.fbs.submitFeedback(this.feedback)
+    .subscribe(feedback=>{ this.feedbackcopy = feedback;this.visibility = 'shown';this.test = false;},errmess =>this.formErrors =<any>errmess);this.feedbackcopy = null;
+    { setTimeout(() => 
+      {
+        this.feedback = this.feedback; this.sv = false; 
+        setTimeout(() => this.feedback = null, 5000);
+      }
+      , 2000);
+    };
     this.feedbackForm.reset({
       firstname:'',
       lastname:'',
@@ -99,5 +123,4 @@ export class ContactComponent implements OnInit {
     });
     this.feedbackFormDirective.resetForm();
   }
-
 }

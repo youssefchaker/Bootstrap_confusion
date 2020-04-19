@@ -8,24 +8,20 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
 import { DISHES } from '../shared/dishes';
 import { Comment} from '../shared/Comment';
-import { trigger, state , animate , transition , style} from '@angular/animations';
+import {visibility , flyInOut, expand} from '../animations/app.animation';
 @Component({
   selector: 'app-dishdetail',
   templateUrl: './dishdetail.component.html',
   styleUrls: ['./dishdetail.component.scss'],
   animations: [
-    trigger('visibility', [
-        state('shown', style({
-            transform: 'scale(1.0)',
-            opacity: 1
-        })),
-        state('hidden', style({
-            transform: 'scale(0.5)',
-            opacity: 0
-        })),
-        transition('* => *', animate('0.5s ease-in-out'))
-    ])
-  ]
+    visibility(),
+    flyInOut(),
+    expand()
+  ],
+  host:{
+    '[@flyInOut]':'true',
+    'style': 'display:block;'
+  }
 })
 export class DishdetailComponent implements OnInit {
 
@@ -124,7 +120,6 @@ export class DishdetailComponent implements OnInit {
     },
     errmes =>{this.dish = null; this.dishcopy = null; this.errMess = <any>errmes;});
     this.feedback = this.feedbackForm.value;
-    console.log(this.feedback);
     this.feedbackForm.reset({
       name:'',
       comment:'',
